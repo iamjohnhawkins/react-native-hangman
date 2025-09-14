@@ -1,97 +1,395 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Hangman Game - React Native + Expo Training Project
 
-# Getting Started
+A Hangman game built with React Native and Expo, featuring both single-player and multiplayer modes. This project is intended as a personal training resource for learning mobile app development with modern React Native practices.
 
-> **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
+![Game Preview](./assets/game-preview.png)
 
-## Step 1: Start Metro
+## Table of Contents
 
-First, you will need to run **Metro**, the JavaScript build tool for React Native.
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+- [Development Guide](#development-guide)
+- [Game Flow](#game-flow)
+- [Component Architecture](#component-architecture)
+- [State Management](#state-management)
+- [API Integration](#api-integration)
+- [Styling Approach](#styling-approach)
+- [Testing](#testing)
+- [Troubleshooting](#troubleshooting)
+- [Learning Resources](#learning-resources)
 
-To start the Metro dev server, run the following command from the root of your React Native project:
+## Features
 
-```sh
-# Using npm
-npm start
+### 🎮 Game Modes
+- **Single Player**: Play against computer-generated words from a dictionary API
+- **Multiplayer**: One player sets a word, another guesses
 
-# OR using Yarn
-yarn start
+### 🎨 User Experience
+- Intuitive touch-friendly interface
+- Visual hangman drawing that updates with wrong guesses
+- Password-style input with eye toggle for secret words
+- Responsive design optimized for mobile devices
+- Smooth animations and transitions
+
+### 🔧 Technical Features
+- TypeScript for type safety
+- Expo SDK 54 for cross-platform development
+- External API integration (Wordnik Dictionary API)
+- Graceful fallback for offline functionality
+- Clean component architecture
+- Comprehensive state management
+
+## Technology Stack
+
+- **React Native**: 0.81.4 - Mobile app framework
+- **Expo**: ~54.0.0 - Development platform and build tools
+- **TypeScript**: Type-safe JavaScript
+- **React**: 19.1.0 - UI library
+- **Expo Status Bar**: Status bar management
+- **Expo Splash Screen**: App launch screen
+- **React Native Safe Area Context**: Safe area handling
+- **Wordnik API**: Dictionary service for random words
+
+## Project Structure
+
+```
+HangmanGame/
+├── src/
+│   ├── components/           # Reusable UI components
+│   │   ├── AlphabetKeyboard.tsx    # Interactive letter selection
+│   │   ├── HangmanDrawing.tsx      # Visual hangman display
+│   │   └── Navigation.tsx          # Screen navigation logic
+│   ├── screens/              # Main application screens
+│   │   ├── HomeScreen.tsx          # Landing page with game mode selection
+│   │   ├── SetupScreen.tsx         # Word input for multiplayer
+│   │   ├── GameScreen.tsx          # Main gameplay interface
+│   │   └── ResultScreen.tsx        # End game results
+│   ├── utils/                # Utility functions and services
+│   │   ├── gameLogic.ts            # Core game logic
+│   │   └── wordService.ts          # API integration for random words
+│   └── types/                # TypeScript type definitions
+│       └── index.ts                # Centralized type exports
+├── assets/                   # Static assets (icons, images)
+├── App.tsx                   # Root application component
+├── index.js                  # Application entry point
+├── app.json                  # Expo configuration
+├── package.json              # Dependencies and scripts
+└── README.md                 # This file
 ```
 
-## Step 2: Build and run your app
+## Getting Started
 
-With Metro running, open a new terminal window/pane from the root of your React Native project, and use one of the following commands to build and run your Android or iOS app:
+### Prerequisites
 
-### Android
+Before running this project, ensure you have:
 
-```sh
-# Using npm
-npm run android
+1. **Node.js** (v18 or higher)
+2. **npm** or **yarn** package manager
+3. **Expo CLI** (will be installed automatically)
+4. **iOS Simulator** (macOS) or **Android Emulator**
+5. **Expo Go app** on your physical device (optional)
 
-# OR using Yarn
-yarn android
+### Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone <repository-url>
+   cd HangmanGame
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+
+3. **Start the development server**
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
+
+4. **Run on device/simulator**
+   ```bash
+   # iOS Simulator (macOS only)
+   npm run ios
+
+   # Android Emulator
+   npm run android
+
+   # Or scan QR code with Expo Go app
+   ```
+
+### Available Scripts
+
+- `npm start` - Start Expo development server
+- `npm run ios` - Run on iOS simulator
+- `npm run android` - Run on Android emulator
+- `npm run lint` - Run ESLint code analysis
+- `npm test` - Run Jest tests (when implemented)
+
+## Development Guide
+
+### Adding New Features
+
+1. **Create components** in `src/components/`
+2. **Add screens** in `src/screens/`
+3. **Define types** in `src/types/index.ts`
+4. **Add utilities** in `src/utils/`
+5. **Update navigation** in `App.tsx` and `Navigation.tsx`
+
+### Code Style Guidelines
+
+- Use **TypeScript** for all new files
+- Follow **React hooks** patterns
+- Implement **proper error handling**
+- Use **descriptive variable names**
+- Add **inline comments** for complex logic
+- Follow **React Native styling** conventions
+
+## Game Flow
+
+### Application Flow Diagram
+```
+HomeScreen
+    ├── Single Player → GameScreen (with API word)
+    └── Two Player → SetupScreen → GameScreen
+                                      └── ResultScreen
+                                          ├── Play Again (same mode)
+                                          └── Back to Home
 ```
 
-### iOS
+### Screen Responsibilities
 
-For iOS, remember to install CocoaPods dependencies (this only needs to be run on first clone or after updating native deps).
+1. **HomeScreen**: Game mode selection and instructions
+2. **SetupScreen**: Secret word input for multiplayer games
+3. **GameScreen**: Main gameplay with hangman drawing and letter selection
+4. **ResultScreen**: Game outcome display with contextual messaging
 
-The first time you create a new project, run the Ruby bundler to install CocoaPods itself:
+## Component Architecture
 
-```sh
-bundle install
+### Core Components
+
+#### `AlphabetKeyboard.tsx`
+- Renders interactive alphabet grid
+- Manages letter selection state
+- Handles guess submissions
+- Props: `onLetterPress`, `guessedLetters`, `disabled`
+
+#### `HangmanDrawing.tsx`
+- Visual representation of hangman
+- Updates based on wrong guess count
+- SVG-based drawing for scalability
+- Props: `wrongGuesses`, `maxGuesses`
+
+#### `Navigation.tsx`
+- Centralized screen routing logic
+- Passes props between screens
+- Handles screen transitions
+- Props: `currentScreen`, `onScreenChange`, `onGameStart`
+
+### Screen Components
+
+Each screen follows this pattern:
+- Interface definition with typed props
+- Functional component with hooks
+- Event handlers for user interactions
+- StyleSheet for component styling
+- Export as default
+
+## State Management
+
+### App-Level State (App.tsx)
+
+```typescript
+const [currentScreen, setCurrentScreen] = useState<GameScreen>('home');
+const [gameWord, setGameWord] = useState<string>('');
+const [gameResult, setGameResult] = useState<GameResult | null>(null);
+const [isSinglePlayer, setIsSinglePlayer] = useState<boolean>(false);
 ```
 
-Then, and every time you update your native dependencies, run:
+### Game State (GameScreen.tsx)
 
-```sh
-bundle exec pod install
+```typescript
+const [guessedLetters, setGuessedLetters] = useState<string[]>([]);
+const [wrongGuesses, setWrongGuesses] = useState(0);
+const [gameStatus, setGameStatus] = useState<'playing' | 'won' | 'lost'>('playing');
 ```
 
-For more information, please visit [CocoaPods Getting Started guide](https://guides.cocoapods.org/using/getting-started.html).
+### State Flow Patterns
 
-```sh
-# Using npm
-npm run ios
+1. **Props down**: Parent components pass data to children
+2. **Events up**: Child components notify parents of state changes
+3. **Local state**: Components manage their own UI-specific state
+4. **Derived state**: Calculate values from existing state
 
-# OR using Yarn
-yarn ios
+## API Integration
+
+### Word Service (`src/utils/wordService.ts`)
+
+The application integrates with the Wordnik Dictionary API for generating random words:
+
+```typescript
+export const getRandomWord = async (): Promise<string> => {
+  try {
+    // API call to Wordnik
+    const response = await fetch('https://api.wordnik.com/...');
+    return processedWord;
+  } catch (error) {
+    // Fallback to local word list
+    return FALLBACK_WORDS[randomIndex];
+  }
+};
 ```
 
-If everything is set up correctly, you should see your new app running in the Android Emulator, iOS Simulator, or your connected device.
+#### API Features
+- **Rate limiting**: Handles API quotas gracefully
+- **Offline support**: Falls back to local word list
+- **Word validation**: Ensures only letter-based words
+- **Length filtering**: 4-12 character words only
 
-This is one way to run your app — you can also build it directly from Android Studio or Xcode.
+#### Fallback Strategy
+When API fails or is unavailable:
+1. Catches network/API errors
+2. Falls back to curated local word list
+3. Logs errors for debugging
+4. Maintains seamless user experience
 
-## Step 3: Modify your app
+## Styling Approach
 
-Now that you have successfully run the app, let's make changes!
+### Design System
 
-Open `App.tsx` in your text editor of choice and make some changes. When you save, your app will automatically update and reflect these changes — this is powered by [Fast Refresh](https://reactnative.dev/docs/fast-refresh).
+The app uses a consistent design system with:
 
-When you want to forcefully reload, for example to reset the state of your app, you can perform a full reload:
+```typescript
+// Color Palette
+const colors = {
+  primary: '#3498db',     // Blue
+  secondary: '#e74c3c',   // Red
+  success: '#27ae60',     // Green
+  background: '#f0f8ff',  // Light Blue
+  text: '#2c3e50',        // Dark Blue
+  accent: '#34495e'       // Gray
+};
+```
 
-- **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Dev Menu**, accessed via <kbd>Ctrl</kbd> + <kbd>M</kbd> (Windows/Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (macOS).
-- **iOS**: Press <kbd>R</kbd> in iOS Simulator.
+### Styling Patterns
 
-## Congratulations! :tada:
+1. **StyleSheet.create()** for component styles
+2. **Flexbox** for responsive layouts
+3. **Platform-specific** adjustments when needed
+4. **Consistent spacing** using multiples of 8px
+5. **Shadow effects** for depth and hierarchy
 
-You've successfully run and modified your React Native App. :partying_face:
+### Responsive Design
 
-### Now what?
+- Flexible layouts using `flex` properties
+- Percentage-based widths for buttons
+- Safe area handling for notched devices
+- Touch-friendly tap targets (44px minimum)
 
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [docs](https://reactnative.dev/docs/getting-started).
+## Testing
 
-# Troubleshooting
+### Testing Strategy (Future Implementation)
 
-If you're having issues getting the above steps to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
+```typescript
+// Example test structure
+describe('GameScreen', () => {
+  it('should handle letter guesses correctly', () => {
+    // Test game logic
+  });
 
-# Learn More
+  it('should detect win/lose conditions', () => {
+    // Test game state changes
+  });
+});
+```
 
-To learn more about React Native, take a look at the following resources:
+### Recommended Testing Libraries
+- **Jest**: JavaScript testing framework
+- **React Native Testing Library**: Component testing
+- **Detox**: End-to-end testing
+- **Metro**: Code coverage reporting
 
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
+## Troubleshooting
+
+### Common Issues
+
+#### Expo/Metro Issues
+```bash
+# Clear Metro cache
+npx expo start --clear
+
+# Reset Expo cache
+npx expo install --fix
+```
+
+#### iOS Build Issues
+```bash
+# Rebuild iOS pods
+cd ios && rm -rf Pods Podfile.lock
+npx pod install
+```
+
+#### Android Build Issues
+```bash
+# Clean Android build
+cd android && ./gradlew clean
+cd .. && npx expo run:android
+```
+
+#### API Issues
+- Check internet connectivity
+- Verify API endpoint availability
+- Review console logs for network errors
+- Test with fallback word list
+
+### Development Tips
+
+1. **Hot Reload**: Save files to see instant updates
+2. **Debug Menu**: Shake device or Cmd+D (iOS) / Cmd+M (Android)
+3. **Console Logs**: Use React Native Flipper for debugging
+4. **TypeScript**: Enable strict mode for better type checking
+
+## Learning Resources
+
+### React Native & Expo
+- [React Native Documentation](https://reactnative.dev/docs/getting-started)
+- [Expo Documentation](https://docs.expo.dev/)
+- [React Native Express](https://www.reactnativeexpress.com/)
+
+### TypeScript
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [React TypeScript Cheatsheet](https://react-typescript-cheatsheet.netlify.app/)
+
+### Mobile Development
+- [iOS Human Interface Guidelines](https://developer.apple.com/design/human-interface-guidelines/)
+- [Material Design](https://material.io/design)
+
+### Code Quality
+- [ESLint React Native Rules](https://github.com/Intellicode/eslint-plugin-react-native)
+- [Prettier Configuration](https://prettier.io/docs/en/configuration.html)
+
+---
+
+## Contributing
+
+This is a training project, but contributions are welcome:
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is created for educational purposes. Feel free to use it as a learning resource.
+
+---
+
+**Happy Coding! 🎮📱**
